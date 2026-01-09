@@ -1,4 +1,7 @@
 
+using Microsoft.EntityFrameworkCore;
+using NorthWind.Data;
+
 namespace NorthWind
 {
     public class Program
@@ -7,7 +10,13 @@ namespace NorthWind
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            //recupere la chain de connexion à la base dans les paramètres
+            string? connect = builder.Configuration.GetConnectionString("NorthWindConnect");
+
             // Add services to the container.
+            //enregitre la classe de contexte de données comme service
+            // en lui indiquant la connexion à utiliser
+            builder.Services.AddDbContext<ContexteNorthwind>(opt => opt.UseSqlServer(connect));
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
