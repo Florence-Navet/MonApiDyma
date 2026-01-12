@@ -1,4 +1,8 @@
-﻿namespace NorthWind.Entities
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace NorthWind.Entities
 {
     public class Employe
     {
@@ -13,6 +17,7 @@
         public DateTime? DateEmbauche { get; set; }
         public byte[]? Photo { get; set; }
         public string? Notes { get; set; }
+        public bool VoitureFonction { get; set; }
     }
 
     public class Adresse
@@ -34,9 +39,18 @@
 
     public class Territoire
     {
+        //[Key, MaxLength(20), Unicode(false)]
         public string Id { get; set; } = string.Empty;
+
+        //[ForeignKey("Région")]
         public int IdRegion { get; set; }
+
+        //[MaxLength(40)]
         public string Nom { get; set; } = string.Empty;
+
+        //Property navigation
+        //[DeleteBehavior(DeleteBehavior.NoAction)]
+        //public virtual Region Région { get; set; } = null!; // prop de navigation virtuelle
     }
 
     public class Region

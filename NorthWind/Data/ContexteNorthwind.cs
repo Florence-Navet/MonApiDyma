@@ -55,9 +55,9 @@ namespace NorthWind.Data
                 entity.ToTable("Affectations");
                 entity.HasKey(e => new { e.IdEmploye, e.IdTerritoire }); // syntaxe anonyme 
 
-                entity.Property(e => e.IdTerritoire).HasMaxLength(20).IsUnicode(false);
+                //entity.Property(e => e.IdTerritoire).HasMaxLength(20).IsUnicode(false); on peut mettre ça en commentaire car il deduit tout seul
 
-                //entity.HasOne<Employe>().WithMany().HasForeignKey(a => a.IdEmploye);
+                //entity.HasOne<Employe>().WithMany().HasForeignKey(a => a.IdEmploye); on peut le faire dans territoire c'es mieux
                 //entity.HasOne<Territoire>().WithMany().HasForeignKey(a => a.IdTerritoire);
             });
 
@@ -70,7 +70,7 @@ namespace NorthWind.Data
                 entity.Property(e => e.Nom).HasMaxLength(40);
 
                 //entity.HasMany<Territoire>().WithOne().HasForeignKey(d => d.IdRegion)
-                //	.OnDelete(DeleteBehavior.NoAction);
+                //    .OnDelete(DeleteBehavior.NoAction); moins conseille
             });
 
 
@@ -82,14 +82,45 @@ namespace NorthWind.Data
                 entity.Property(e => e.Id).HasMaxLength(20).IsUnicode(false);
                 entity.Property(e => e.Nom).HasMaxLength(40);
 
-                //entity.HasOne<Region>().WithMany().HasForeignKey(d => d.IdRegion)
-                //                .OnDelete(DeleteBehavior.NoAction);
+                entity.HasOne<Region>().WithMany().HasForeignKey(d => d.IdRegion)
+                                .OnDelete(DeleteBehavior.NoAction); //utiliser plutot l'entite fille
 
                 // Crée la relation N-N avec Employe en utilisant l'entité Affectation comme entité d'association
-                //entity.HasMany<Employe>().WithMany().UsingEntity<Affectation>(
-                //    l => l.HasOne<Employe>().WithMany().HasForeignKey(a => a.IdEmploye),
-                //    r => r.HasOne<Territoire>().WithMany().HasForeignKey(a => a.IdTerritoire));
+                entity.HasMany<Employe>().WithMany().UsingEntity<Affectation>(
+                    l => l.HasOne<Employe>().WithMany().HasForeignKey(a => a.IdEmploye),
+                    r => r.HasOne<Territoire>().WithMany().HasForeignKey(a => a.IdTerritoire));
             });
+
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            {
+                modelBuilder.Entity<Employe>().HasData(
+                new Employe
+                {
+                    Id = 11,
+                    Nom = "Prégent",
+                    Prenom = "Eric",
+                    IdManager = 2,
+                    Fonction = "Sales Representative",
+                    Civilite = "Mr.",
+                    DateNaissance = new DateTime(2000, 5, 20),
+                    DateEmbauche = new DateTime(2023, 10, 11),
+                    IdAdresse = new Guid("01fcbc07-b6ba-4f3a-ac69-891e5a41b14e")
+                },
+                new Employe
+                {
+                    Id = 12,
+                    Nom = "Rignaut",
+                    Prenom = "Solène",
+                    IdManager = 2,
+                    Fonction = "Sales Representative",
+                    Civilite = "Mrs.",
+                    DateNaissance = new DateTime(2000, 5, 20),
+                    DateEmbauche = new DateTime(2023, 10, 11),
+                    IdAdresse = new Guid("01fcbc07-b6ba-4f3a-ac69-891e5a41b14e")
+                });
+            }
+
+
 
 
 
