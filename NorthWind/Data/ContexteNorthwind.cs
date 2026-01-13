@@ -91,6 +91,7 @@ namespace NorthWind.Data
                     r => r.HasOne<Territoire>().WithMany().HasForeignKey(a => a.IdTerritoire));
             });
 
+            /*
             if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
             {
                 modelBuilder.Entity<Employe>().HasData(
@@ -118,7 +119,7 @@ namespace NorthWind.Data
                     DateEmbauche = new DateTime(2023, 10, 11),
                     IdAdresse = new Guid("01fcbc07-b6ba-4f3a-ac69-891e5a41b14e")
                 });
-            }
+            }*/
 
 
 

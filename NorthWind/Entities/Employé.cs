@@ -17,7 +17,7 @@ namespace NorthWind.Entities
         public DateTime? DateEmbauche { get; set; }
         public byte[]? Photo { get; set; }
         public string? Notes { get; set; }
-        public bool VoitureFonction { get; set; }
+        //public bool VoitureFonction { get; set; }
     }
 
     public class Adresse
