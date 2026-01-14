@@ -1,6 +1,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using NorthWind.Data;
+using NorthWind.Services;
 
 namespace NorthWind
 {
@@ -17,6 +18,9 @@ namespace NorthWind
             //enregitre la classe de contexte de données comme service
             // en lui indiquant la connexion à utiliser
             builder.Services.AddDbContext<ContexteNorthwind>(opt => opt.UseSqlServer(connect));
+
+            //enregistre le service métier
+            builder.Services.AddScoped<IServiceEmployes, ServiceEmployes>();
 
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
