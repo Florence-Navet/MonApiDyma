@@ -17,7 +17,7 @@ namespace NorthWind.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "9.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -59,7 +59,7 @@ namespace NorthWind.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Adresses", (string)null);
+                    b.ToTable("Adresses");
                 });
 
             modelBuilder.Entity("NorthWind.Entities.Affectation", b =>
