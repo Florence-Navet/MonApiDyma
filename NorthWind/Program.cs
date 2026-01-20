@@ -17,7 +17,8 @@ namespace NorthWind
             // Add services to the container.
             //enregitre la classe de contexte de données comme service
             // en lui indiquant la connexion à utiliser
-            builder.Services.AddDbContext<ContexteNorthwind>(opt => opt.UseSqlServer(connect));
+            builder.Services.AddDbContext<ContexteNorthwind>(opt => opt.UseSqlServer(connect)
+            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)); // annule le suivi des modifications
 
             //enregistre le service métier
             builder.Services.AddScoped<IServiceEmployes, ServiceEmployes>();

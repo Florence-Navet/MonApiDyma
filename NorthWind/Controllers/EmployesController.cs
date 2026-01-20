@@ -48,6 +48,18 @@ namespace NorthWind.Controllers
             return Ok(employe);
         }
 
-       
-    }
+      // GET: api/Regions/{id}
+      [HttpGet("/api/Regions/{id}")]
+      public async Task<ActionResult<Region>> GetRégions(int id)
+      {
+         Region? region = await _serviceEmp.ObtenirRégion(id);
+
+         if (region == null)
+         {
+            return NotFound();
+         }
+
+         return Ok(region);
+      }
+   }
 }

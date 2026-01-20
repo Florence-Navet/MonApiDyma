@@ -17,7 +17,11 @@ namespace NorthWind.Entities
         public DateTime? DateEmbauche { get; set; }
         public byte[]? Photo { get; set; }
         public string? Notes { get; set; }
-        //public bool VoitureFonction { get; set; }
+      //public bool VoitureFonction { get; set; }
+
+      //propriete de navigateion vers l'adresse
+      public virtual Adresse Adresse { get; set; } = null!;
+      public virtual List<Territoire> Territoires { get; set; } = new();
     }
 
     public class Adresse
@@ -57,5 +61,8 @@ namespace NorthWind.Entities
     {
         public int Id { get; set; }
         public string Nom { get; set; } = string.Empty;
-    }
+
+      //propriete de navigation
+      public virtual List<Territoire> Territoires { get; set; } = new();
+   }
 }
