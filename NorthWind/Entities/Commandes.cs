@@ -31,11 +31,11 @@ public class Commande
    public DateTime? DateLivraison { get; set; }
    public decimal? FraisLivraison { get; set; }
 
-   // Propriétés de navigation
+   // Propriétés de navigation pour avoir d'erreur code 400
    public virtual List<LigneCommande> Lignes { get; set; } = new();
-   public virtual Employe Employe { get; set; } = new();
-   public virtual Adresse Adresse { get; set; } = new();
-   public virtual Livreur Livreur { get; set; } = new();
+   public virtual Employe? Employe { get; set; } 
+   public virtual Adresse? Adresse { get; set; } 
+   public virtual Livreur? Livreur { get; set; } 
 }
 
 public class LigneCommande

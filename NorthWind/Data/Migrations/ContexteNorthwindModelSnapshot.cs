@@ -49,7 +49,7 @@ namespace NorthWind.Data.Migrations
 
                     b.HasIndex("IdAdresse");
 
-                    b.ToTable("Clients");
+                    b.ToTable("Clients", (string)null);
                 });
 
             modelBuilder.Entity("Commande", b =>
@@ -95,7 +95,7 @@ namespace NorthWind.Data.Migrations
 
                     b.HasIndex("IdLivreur");
 
-                    b.ToTable("Commandes");
+                    b.ToTable("Commandes", (string)null);
                 });
 
             modelBuilder.Entity("LigneCommande", b =>
@@ -121,7 +121,7 @@ namespace NorthWind.Data.Migrations
 
                     b.HasIndex("IdProduit");
 
-                    b.ToTable("LignesCommandes");
+                    b.ToTable("LignesCommandes", (string)null);
                 });
 
             modelBuilder.Entity("Livreur", b =>
@@ -144,7 +144,7 @@ namespace NorthWind.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Livreurs");
+                    b.ToTable("Livreurs", (string)null);
                 });
 
             modelBuilder.Entity("NorthWind.Entities.Adresse", b =>
@@ -184,7 +184,7 @@ namespace NorthWind.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Adresses");
+                    b.ToTable("Adresses", (string)null);
                 });
 
             modelBuilder.Entity("NorthWind.Entities.Affectation", b =>
@@ -220,7 +220,7 @@ namespace NorthWind.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("NorthWind.Entities.Employe", b =>
@@ -310,7 +310,7 @@ namespace NorthWind.Data.Migrations
 
                     b.HasIndex("IdAdresse");
 
-                    b.ToTable("Fournisseurs");
+                    b.ToTable("Fournisseurs", (string)null);
                 });
 
             modelBuilder.Entity("NorthWind.Entities.Produit", b =>
@@ -352,7 +352,7 @@ namespace NorthWind.Data.Migrations
 
                     b.HasIndex("IdFournisseur");
 
-                    b.ToTable("Produits");
+                    b.ToTable("Produits", (string)null);
                 });
 
             modelBuilder.Entity("NorthWind.Entities.Region", b =>

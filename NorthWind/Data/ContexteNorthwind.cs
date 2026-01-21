@@ -173,16 +173,20 @@ namespace NorthWind.Data
                   .HasForeignKey(c => c.IdLivreur)
                   .OnDelete(DeleteBehavior.NoAction);
 
-            entity.HasOne(c => c.Adresse).WithMany()
+            entity.HasOne(c => c.Adresse)
+                  .WithMany()
                   .HasForeignKey(c => c.IdAdresse)
+                  .IsRequired(false)
                   .OnDelete(DeleteBehavior.NoAction);
 
             entity.HasOne<Client>().WithMany(c => c.Commandes)
                   .HasForeignKey(c => c.IdClient)
                   .OnDelete(DeleteBehavior.NoAction);
 
-            entity.HasOne(c => c.Employe).WithMany()
+            entity.HasOne(c => c.Employe)
+                  .WithMany()
                   .HasForeignKey(c => c.IdEmploye)
+                  .IsRequired(false)
                   .OnDelete(DeleteBehavior.NoAction);
          });
 
