@@ -24,6 +24,8 @@ namespace NorthWind
 
             //enregistre le service métier
             builder.Services.AddScoped<IServiceEmployes, ServiceEmployes>();
+         builder.Services.AddScoped<IServiceCommandes, ServiceCommandes>();
+
 
          builder.Services.AddControllers().AddJsonOptions(opt =>
          opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
