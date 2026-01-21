@@ -13,6 +13,8 @@ namespace NorthWind.Data
         public virtual DbSet<Employe> Employés { get; set; }
         public virtual DbSet<Region> Régions { get; set; }
         public virtual DbSet<Territoire> Territoires { get; set; }
+     
+      public virtual DbSet<Affectation> Affectations { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -55,7 +57,10 @@ namespace NorthWind.Data
                 entity.ToTable("Affectations");
                 entity.HasKey(e => new { e.IdEmploye, e.IdTerritoire }); // syntaxe anonyme 
 
-                //entity.Property(e => e.IdTerritoire).HasMaxLength(20).IsUnicode(false); on peut mettre ça en commentaire car il deduit tout seul
+               entity.Property(e => e.IdTerritoire).HasMaxLength(20).IsUnicode(false); //on peut mettre ça en commentaire car il deduit tout seul
+
+               entity.HasOne<Employe>().WithMany().HasForeignKey(d => d.IdEmploye);
+               entity.HasOne<Territoire>().WithMany().HasForeignKey(d => d.IdTerritoire);
 
                 //entity.HasOne<Employe>().WithMany().HasForeignKey(a => a.IdEmploye); on peut le faire dans territoire c'es mieux
                 //entity.HasOne<Territoire>().WithMany().HasForeignKey(a => a.IdTerritoire);
@@ -82,7 +87,7 @@ namespace NorthWind.Data
                 entity.Property(e => e.Id).HasMaxLength(20).IsUnicode(false);
                 entity.Property(e => e.Nom).HasMaxLength(40);
 
-                entity.HasOne<Region>().WithMany(r => r.Territoires).HasForeignKey(d => d.IdRegion)
+                entity.HasOne<Region>(t => t.Région).WithMany(r => r.Territoires).HasForeignKey(d => d.IdRegion)
                                 .OnDelete(DeleteBehavior.NoAction); //utiliser plutot l'entite fille
 
                 // Crée la relation N-N avec Employe en utilisant l'entité Affectation comme entité d'association

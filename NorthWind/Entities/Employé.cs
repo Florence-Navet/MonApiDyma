@@ -20,7 +20,7 @@ namespace NorthWind.Entities
       //public bool VoitureFonction { get; set; }
 
       //propriete de navigateion vers l'adresse
-      public virtual Adresse Adresse { get; set; } = null!;
+      public virtual Adresse Adresse { get; set; } = null!; // reponse 400 si pas adresse
       public virtual List<Territoire> Territoires { get; set; } = new();
     }
 
@@ -52,10 +52,10 @@ namespace NorthWind.Entities
         //[MaxLength(40)]
         public string Nom { get; set; } = string.Empty;
 
-        //Property navigation
-        //[DeleteBehavior(DeleteBehavior.NoAction)]
-        //public virtual Region Région { get; set; } = null!; // prop de navigation virtuelle
-    }
+      //Property navigation
+      //[DeleteBehavior(DeleteBehavior.NoAction)]
+      public virtual Region Région { get; set; } = null!; // prop de navigation virtuelle
+   }
 
     public class Region
     {

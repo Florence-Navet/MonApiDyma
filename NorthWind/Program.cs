@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using NorthWind.Data;
 using NorthWind.Services;
+using System.Security.Cryptography.Xml;
+using System.Text.Json.Serialization;
 
 namespace NorthWind
 {
@@ -23,7 +25,9 @@ namespace NorthWind
             //enregistre le service métier
             builder.Services.AddScoped<IServiceEmployes, ServiceEmployes>();
 
-            builder.Services.AddControllers();
+         builder.Services.AddControllers().AddJsonOptions(opt =>
+         opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
