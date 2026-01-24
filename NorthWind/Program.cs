@@ -1,6 +1,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using NorthWind.Data;
+using NorthWind.Middlewares;
 using NorthWind.Services;
 using System.Security.Cryptography.Xml;
 using System.Text.Json.Serialization;
@@ -46,6 +47,9 @@ namespace NorthWind
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+
+            //Middleware de gestion des erreurs personnalisée
+            app.UseMiddleware<CustomErrorResponseMiddleware>();
 
 
             app.MapControllers();

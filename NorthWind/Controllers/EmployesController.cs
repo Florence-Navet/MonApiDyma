@@ -70,12 +70,29 @@ namespace NorthWind.Controllers
       [HttpPost]
       public async Task<ActionResult<Employe>> PostEmployé(Employe emp)
       {
-         // enregistre l'employe dans la base et le recuperer avec son ID genere automatiquement
-         Employe res = await _serviceEmp.AjouterEmployé(emp);
+            try
+            {
+                 // enregistre l'employe dans la base et le recuperer avec son ID genere automatiquement
+                 Employe res = await _serviceEmp.AjouterEmployé(emp);
 
-         //Renvoie reponde 201 avec l'entête
-         return CreatedAtAction(nameof(GetEmploye), new { id = res.Id }, res);
-      }
+                 //Renvoie reponde 201 avec l'entête
+                 return CreatedAtAction(nameof(GetEmploye), new { id = res.Id }, res);
+
+            }
+            //gestion d'erreur de la class DbUpdateException
+            //catch (DbUpdateException e)
+            //{
+            //    ProblemDetails pb = e.ConvertToProblemDetails();
+            //    //detail : msg erreur, instance, statue: code http, titre : type d'erreur
+            //    return Problem(pb.Detail, null, pb.Status, pb.Title);
+
+            //}
+            //gestion erreur de 
+            catch (Exception e)
+            {
+                return this.CustomResponseForError(e);
+            }
+        }
 
       //POST : api/affectations
       [HttpPost("/api/Affectations")]
