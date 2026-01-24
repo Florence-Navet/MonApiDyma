@@ -70,15 +70,15 @@ namespace NorthWind.Controllers
       [HttpPost]
       public async Task<ActionResult<Employe>> PostEmployé(Employe emp)
       {
-            try
-            {
-                 // enregistre l'employe dans la base et le recuperer avec son ID genere automatiquement
-                 Employe res = await _serviceEmp.AjouterEmployé(emp);
+            //try
+            //{
+            // enregistre l'employe dans la base et le recuperer avec son ID genere automatiquement
+            Employe res = await _serviceEmp.AjouterEmployé(emp);
 
-                 //Renvoie reponde 201 avec l'entête
-                 return CreatedAtAction(nameof(GetEmploye), new { id = res.Id }, res);
+            //Renvoie reponde 201 avec l'entête
+            return CreatedAtAction(nameof(GetEmploye), new { id = res.Id }, res);
 
-            }
+            //}
             //gestion d'erreur de la class DbUpdateException
             //catch (DbUpdateException e)
             //{
@@ -87,15 +87,18 @@ namespace NorthWind.Controllers
             //    return Problem(pb.Detail, null, pb.Status, pb.Title);
 
             //}
-            //gestion erreur de 
-            catch (Exception e)
-            {
-                return this.CustomResponseForError(e);
-            }
+            //gestion erreur de ControllerBaseEx
+            //catch (Exception e)
+            //{
+            //    return this.CustomResponseForError(e);
+            //}
+
+            //si je desactive le try catch, le middleware de gestion des erreurs de bdd s'en charge
+
         }
 
-      //POST : api/affectations
-      [HttpPost("/api/Affectations")]
+        //POST : api/affectations
+        [HttpPost("/api/Affectations")]
       public async Task<ActionResult<Affectation>> PostAffectation([FromForm] Affectation a)
       {
          //enregistre les donnees en base
