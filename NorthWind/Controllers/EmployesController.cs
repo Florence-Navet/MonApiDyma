@@ -17,10 +17,12 @@ namespace NorthWind.Controllers
     public class EmployesController : ControllerBase
     {
         private readonly IServiceEmployes _serviceEmp;
+        private readonly ILogger<EmployesController> _logger;
 
-        public EmployesController(IServiceEmployes service)
+        public EmployesController(IServiceEmployes service, ILogger<EmployesController> logger)
         {
             _serviceEmp = service;
+            _logger = logger;
         }
       #region Requete GET
 
@@ -70,28 +72,29 @@ namespace NorthWind.Controllers
       [HttpPost]
       public async Task<ActionResult<Employe>> PostEmployé(Employe emp)
       {
-            //try
-            //{
-            // enregistre l'employe dans la base et le recuperer avec son ID genere automatiquement
-            Employe res = await _serviceEmp.AjouterEmployé(emp);
+            try
+            {
+                // enregistre l'employe dans la base et le recuperer avec son ID genere automatiquement
+                Employe res = await _serviceEmp.AjouterEmployé(emp);
 
             //Renvoie reponde 201 avec l'entête
             return CreatedAtAction(nameof(GetEmploye), new { id = res.Id }, res);
 
-            //}
-            //gestion d'erreur de la class DbUpdateException
-            //catch (DbUpdateException e)
-            //{
-            //    ProblemDetails pb = e.ConvertToProblemDetails();
-            //    //detail : msg erreur, instance, statue: code http, titre : type d'erreur
-            //    return Problem(pb.Detail, null, pb.Status, pb.Title);
+                //}
+                //gestion d'erreur de la class DbUpdateException
+                //catch (DbUpdateException e)
+                //{
+                //    ProblemDetails pb = e.ConvertToProblemDetails();
+                //    //detail : msg erreur, instance, statue: code http, titre : type d'erreur
+                //    return Problem(pb.Detail, null, pb.Status, pb.Title);
 
-            //}
+            }
             //gestion erreur de ControllerBaseEx
-            //catch (Exception e)
-            //{
-            //    return this.CustomResponseForError(e);
-            //}
+            catch (Exception e)
+            {
+                //return this.CustomResponseForError(e);
+                return this.CustomResponseForError(e, emp, _logger);
+            }
 
             //si je desactive le try catch, le middleware de gestion des erreurs de bdd s'en charge
 

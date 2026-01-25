@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using NorthWind.Data;
 using NorthWind.Middlewares;
 using NorthWind.Services;
+using Serilog;
 using System.Security.Cryptography.Xml;
 using System.Text.Json.Serialization;
 
@@ -20,15 +21,26 @@ namespace NorthWind
             // Add services to the container.
             //enregitre la classe de contexte de données comme service
             // en lui indiquant la connexion à utiliser
-            builder.Services.AddDbContext<ContexteNorthwind>(opt => opt.UseSqlServer(connect)
-            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)); // annule le suivi des modifications
+            builder.Services.AddDbContext<ContexteNorthwind>(opt => opt
+            .UseSqlServer(connect)
+            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)// annule le suivi des modifications
+            .EnableSensitiveDataLogging()); // ajoute les donnees sensibles dans les logs (utile pour le dev, pas en prod)
 
             //enregistre le service métier
             builder.Services.AddScoped<IServiceEmployes, ServiceEmployes>();
          builder.Services.AddScoped<IServiceCommandes, ServiceCommandes>();
 
+            // Utilise Serilog comme unique fournisseur de journalisation
+            var logger = new LoggerConfiguration()
+                 .ReadFrom.Configuration(builder.Configuration)
+                 .Enrich.FromLogContext()
+                 .CreateLogger();
+            builder.Logging.ClearProviders();
+            builder.Logging.AddSerilog(logger);
 
-         builder.Services.AddControllers().AddJsonOptions(opt =>
+
+
+            builder.Services.AddControllers().AddJsonOptions(opt =>
          opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
