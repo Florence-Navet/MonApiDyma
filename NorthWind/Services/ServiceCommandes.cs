@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Northwind.Services;
 using NorthWind.Data;
+using NorthWind.Entities;
 
 namespace NorthWind.Services
 {
@@ -43,24 +45,37 @@ namespace NorthWind.Services
          return await req.FirstOrDefaultAsync();
       }
 
-      // Crée une commande pour un employé, une adresse, un client et
-      // un livreur déjà existants en base
-      public async Task<Commande?> AjouterCommande(Commande cde)
-      {
-         // On remet les propriétés de navigation correspondantes à null
-         cde.Employe = null!;
-         cde.Adresse = null!;
-         cde.Livreur = null!;
-         foreach (var ligne in cde.Lignes) ligne.Produit = null!;
+        // Crée une commande pour un employé, une adresse, un client et
+        // un livreur déjà existants en base
+        public async Task<Commande?> AjouterCommande(Commande cde)
+        {
+            // On remet les propriétés de navigation correspondantes à null
+            cde.Employe = null!;
+            cde.Adresse = null!;
+            cde.Livreur = null!;
+            foreach (var ligne in cde.Lignes) ligne.Produit = null!;
 
-         _contexte.Commandes.Add(cde);
-         await _contexte.SaveChangesAsync();
+            // Contrôle les données reçues
+            ValidationRulesException vre = new();
+            if (cde.DateCommande < DateTime.Today.AddDays(-3))
+                vre.Errors.Add("DateCommande", new string[] { "La date de commande doit être > date du jour - 3 jours." });
 
-         return cde;
-      }
+            if (cde.FraisLivraison < 0 || cde.FraisLivraison > 2000)
+                vre.Errors.Add("Frais", new string[] { "Les frais de livraison doivent être compris entre 0 et 2000 €" });
 
-      // Crée une ligne de commande pour une commande donnée
-      public async Task<LigneCommande?> AjouterLigneCommande(int idCommande, LigneCommande ligne)
+            if (vre.Errors.Any()) throw vre;
+
+            foreach (var ligne in cde.Lignes)
+                await ControlerLigneCommande(ligne);
+
+            _contexte.Commandes.Add(cde);
+            await _contexte.SaveChangesAsync();
+
+            return cde;
+        }
+
+        // Crée une ligne de commande pour une commande donnée
+        public async Task<LigneCommande?> AjouterLigneCommande(int idCommande, LigneCommande ligne)
       {
          ligne.IdCommande = idCommande;
          ligne.Produit = null!;
@@ -70,5 +85,19 @@ namespace NorthWind.Services
 
          return ligne;
       }
-   }
+
+        private async Task ControlerLigneCommande(LigneCommande ligne)
+        {
+            Produit? produit = await _contexte.Produits.FindAsync(ligne.IdProduit);
+
+            ValidationRulesException vre = new();
+            if (produit == null || produit.Arrete)
+                vre.Errors.Add("Produit.Arrete", new string[] { $"Le produit {ligne.IdProduit} n'existe pas ou a été arrêté." });
+
+            if (produit != null && produit.UnitesEnStock < ligne.Quantite)
+                vre.Errors.Add("Produit.UnitesEnStock", new string[] { $"La quantité en stock ({produit.UnitesEnStock}) du produit {ligne.IdProduit} est insuffisante." });
+
+            if (vre.Errors.Any()) throw vre;
+        }
+    }
 }

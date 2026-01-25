@@ -41,10 +41,19 @@ namespace NorthWind.Controllers
       [HttpPost]
       public async Task<ActionResult<Commande>> PostCommande(Commande cmde)
       {
-         Commande? commande = await _serviceCmde.AjouterCommande(cmde);
+            try
+            {
 
-         string uri = Url.Action(nameof(GetCommande), new { id = commande?.Id }) ?? "";
-         return Created(uri, commande);
+                 Commande? commande = await _serviceCmde.AjouterCommande(cmde);
+
+                 string uri = Url.Action(nameof(GetCommande), new { id = commande?.Id }) ?? "";
+                 return Created(uri, commande);
+            }
+            catch (Exception e)
+            {
+
+                return this.CustomResponseForError(e);
+            }
       }
 
       // POST: api/Commandes/831/Lignes

@@ -33,9 +33,9 @@ public class Commande
 
    // Propriétés de navigation pour avoir d'erreur code 400
    public virtual List<LigneCommande> Lignes { get; set; } = new();
-   public virtual Employe? Employe { get; set; } 
-   public virtual Adresse? Adresse { get; set; } 
-   public virtual Livreur? Livreur { get; set; } 
+   public virtual Employe? Employe { get; set; }  = new(); // deja existant
+    public virtual Adresse? Adresse { get; set; } = new(); // deja existant
+    public virtual Livreur? Livreur { get; set; } = new(); // deja existant
 }
 
 public class LigneCommande
