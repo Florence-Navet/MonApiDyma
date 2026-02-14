@@ -6,6 +6,7 @@ using NorthWind.Data;
 using Northwind.Services;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Net;
 
 
 namespace NorthWind.Controllers
@@ -15,7 +16,12 @@ namespace NorthWind.Controllers
         // Renvoie une réponse HTTP personnalisée pour les erreurs
         public static ActionResult CustomResponseForError(this ControllerBase controller, Exception e)
         {
-            if (e is DbUpdateException dbe)
+            if (e is DbUpdateConcurrencyException)
+            {
+                return controller.Problem("L'entité ou au moins l'une de ses entités fille n'exite pas en base.",
+                    null, (int)HttpStatusCode.NotFound, "Aucune modification enregistrée en base."); // renvoie un 404
+            }
+            else if (e is DbUpdateException dbe)
             {
                 ProblemDetails pb = dbe.ConvertToProblemDetails();
                 return controller.Problem(pb.Detail, null, pb.Status, pb.Title);

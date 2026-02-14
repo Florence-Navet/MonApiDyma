@@ -11,6 +11,8 @@ namespace NorthWind.Services
       Task<Commande?> ObtenirCommande(int id);
       Task<Commande?> AjouterCommande(Commande cde);
       Task<LigneCommande?> AjouterLigneCommande(int idCommande, LigneCommande ligne);
+
+        Task SupprimerLigneCommande(int idCommande, int idProduit);
    }
 
    public class ServiceCommandes : IServiceCommandes
@@ -85,6 +87,29 @@ namespace NorthWind.Services
 
          return ligne;
       }
+
+        //suppprime une ligne de commande
+        public async Task SupprimerLigneCommande(int idCommande, int idProduit)
+        {
+            LigneCommande ligne = new()
+            {
+                IdCommande = idCommande,
+                IdProduit = idProduit,
+                Produit = null!
+            };
+
+            _contexte.Remove(ligne);
+
+            // a la place de _contexte.Remove(ligne);
+            // on peut faire : _contexte.Entry(ligne).State = EntityState.Deleted;
+            // du coup, enlever la ligne suivante : ligne.Produit = null!
+            // car Ef Core n'a pas besoin de charger le produit pour supprimer la ligne
+            await _contexte.SaveChangesAsync();
+
+
+        }
+
+
 
         private async Task ControlerLigneCommande(LigneCommande ligne)
         {

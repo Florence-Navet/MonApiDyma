@@ -37,8 +37,9 @@ namespace NorthWind.Controllers
          return Ok(commande);
       }
 
-      // POST: api/Commandes
-      [HttpPost]
+
+        // POST: api/Commandes
+        [HttpPost]
       public async Task<ActionResult<Commande>> PostCommande(Commande cmde)
       {
             try
@@ -66,5 +67,21 @@ namespace NorthWind.Controllers
          return Created(uri, res);
       }
 
-   }
+        //DELETE: api/Commandes/831/Lignes/77
+        [HttpDelete("{idCommande}/Lignes/{idProduit}")]
+        public async Task<IActionResult> DeleteLigneCommande(int idCommande, int idProduit)
+        {
+            try
+            {
+                await _serviceCmde.SupprimerLigneCommande(idCommande, idProduit);
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+
+                return this.CustomResponseForError(e);
+            }
+        }
+
+    }
 }
