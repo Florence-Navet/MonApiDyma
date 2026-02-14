@@ -12,8 +12,10 @@ namespace NorthWind.Services
       Task<Commande?> AjouterCommande(Commande cde);
       Task<LigneCommande?> AjouterLigneCommande(int idCommande, LigneCommande ligne);
 
-        Task SupprimerLigneCommande(int idCommande, int idProduit);
-   }
+       Task SupprimerLigneCommande(int idCommande, int idProduit);
+      Task<int> SupprimerCommande(int idCommande);
+      Task<int> SupprimerLigneCommande2(int idCommande, int idProduit);
+    }
 
    public class ServiceCommandes : IServiceCommandes
    {
@@ -76,6 +78,16 @@ namespace NorthWind.Services
             return cde;
         }
 
+        //suprrimer une commande et ses lignes grâce à la suppression en cascade
+        public async Task<int> SupprimerCommande(int idCommande)
+        {
+            Commande? cde = new() { Id = idCommande };
+            //_contexte.Remove(cde);
+            _contexte.Entry(cde).State = EntityState.Deleted;
+            return await _contexte.SaveChangesAsync();
+
+        }
+
         // Crée une ligne de commande pour une commande donnée
         public async Task<LigneCommande?> AjouterLigneCommande(int idCommande, LigneCommande ligne)
       {
@@ -95,10 +107,11 @@ namespace NorthWind.Services
             {
                 IdCommande = idCommande,
                 IdProduit = idProduit,
-                Produit = null!
+                //Produit = null!
             };
+            _contexte.Entry(ligne).State = EntityState.Deleted;
 
-            _contexte.Remove(ligne);
+            //_contexte.Remove(ligne);
 
             // a la place de _contexte.Remove(ligne);
             // on peut faire : _contexte.Entry(ligne).State = EntityState.Deleted;
@@ -109,6 +122,18 @@ namespace NorthWind.Services
 
         }
 
+        //suprrimer une ligne de commande en vérifiant tout d'abord si elle existe
+        public async Task<int> SupprimerLigneCommande2(int idCommande, int idProduit)
+        {
+            //on cherche la ligne de commande à supprimer
+            LigneCommande? Ligne = await _contexte.LignesCommandes.FindAsync(idCommande, idProduit);
+            if (Ligne == null) return 0;
+            //si elle existe, on la supprime
+            else Ligne.Produit = null!;
+
+            _contexte.Remove(Ligne);
+            return await _contexte.SaveChangesAsync();
+        }
 
 
         private async Task ControlerLigneCommande(LigneCommande ligne)

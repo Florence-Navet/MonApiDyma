@@ -56,15 +56,41 @@ namespace NorthWind.Controllers
                 return this.CustomResponseForError(e);
             }
       }
+        // DELETE: api/Commandes/831
+        [HttpDelete("{idCommande}")]
+        public async Task<IActionResult> DeleteCommande(int idCommande)
+        {
+            try
+            {
+                //methode renvoie le nb de ligne supprimer
+                int nbSuppr = await _serviceCmde.SupprimerCommande(idCommande);
+                if (nbSuppr == 0) return NotFound();
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                return this.CustomResponseForError(e);
+            }
+        }
 
-      // POST: api/Commandes/831/Lignes
-      [HttpPost("{idCommande}/Lignes")]
-      public async Task<ActionResult<Commande>> PostLigneCommande(int idCommande, LigneCommande ligne)
+        // POST: api/Commandes/831/Lignes
+        [HttpPost("{idCommande}/Lignes")]
+      public async Task<ActionResult<LigneCommande>> PostLigneCommande(int idCommande, LigneCommande ligne)
       {
-         LigneCommande? res = await _serviceCmde.AjouterLigneCommande(idCommande, ligne);
 
-         string uri = Url.Action(nameof(GetCommande), new { Id = res?.IdCommande }) ?? "";
-         return Created(uri, res);
+            try
+            {
+                 LigneCommande? res = await _serviceCmde.AjouterLigneCommande(idCommande, ligne);
+
+                 string uri = Url.Action(nameof(GetCommande), new { Id = res?.IdCommande }) ?? "";
+                 return Created(uri, res);
+
+            }
+            catch (Exception e)
+            {
+
+                return this.CustomResponseForError(e);
+            }
       }
 
         //DELETE: api/Commandes/831/Lignes/77

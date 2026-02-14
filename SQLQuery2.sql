@@ -1,18 +1,38 @@
-﻿SELECT * FROM Clients 
-
-INSERT INTO Clients (Id, IdAdresse, NomSociete)
-VALUES ('BOLID', '0cac718e-bd21-4403-b155-4f994cea9ccc', 'Bolid SA');
+﻿SELECT TABLE_SCHEMA, TABLE_NAME FROM INFORMATION_SCHEMA.TABLES ORDER BY TABLE_NAME;
 
 
--- Voir les clients disponibles
-SELECT Id, NomSociete FROM Clients;
+USE Northwind;
 
-SELECT * FROM Employes WHERE Id = 5;
+INSERT INTO Employes (Prenom, Nom, IdAdresse, Fonction, Civilite)
+VALUES ('Test', 'Employe', '20F5B2E0-687B-44E8-8EB9-0009876D8C22', 'Développeur', 'M.');
+-- D'abord supprimer dans le bon ordre (tables enfants d'abord)
 
-SELECT * FROM Livreurs WHERE Id = 1;
+EXEC sp_MSforeachtable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL';
+DELETE FROM Affectations;
+DELETE FROM LignesCommandes;
+DELETE FROM Commandes;
+DELETE FROM Clients;
+DELETE FROM Employes;
+DELETE FROM Fournisseurs;
+DELETE FROM Produits;
+DELETE FROM Categories;
+DELETE FROM Territoires;
+DELETE FROM Regions;
+DELETE FROM Livreurs;
+DELETE FROM Adresses;
 
+-- Vérifier
+SELECT COUNT(*) AS NbAdresses FROM Adresses;
+SELECT COUNT(*) AS NbEmployes FROM Employes	;
+SELECT COUNT(*) AS NbFournisseurs FROM Fournisseurs;
 
-INSERT INTO Livreurs (Id, NomSociete, Telephone)
-VALUES (1, 'Speedy Express', '01-02-03-04-05');
+SELECT COUNT(*) FROM Employes;
 
-SELECT * FROM Livreurs;
+SELECT COUNT(*) FROM Commandes;
+
+SELECT Id, IdAdresse FROM Commandes WHERE Id = 1;
+SELECT COUNT(*) FROM LignesCommandes;
+
+SELECT TOP 5 Id FROM Commandes;
+
+SELECT TOP 5 IdCommande, IdProduit FROM LignesCommandes;
