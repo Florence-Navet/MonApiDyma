@@ -1,13 +1,9 @@
-
 using Microsoft.EntityFrameworkCore;
-using NorthWind.Data;
-using NorthWind.Middlewares;
-using NorthWind.Services;
-using Serilog;
-using System.Security.Cryptography.Xml;
+using Northwind.Data;
+using Northwind.Services;
 using System.Text.Json.Serialization;
 
-namespace NorthWind
+namespace Northwind
 {
     public class Program
     {
@@ -15,35 +11,39 @@ namespace NorthWind
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            //recupere la chain de connexion à la base dans les paramètres
-            string? connect = builder.Configuration.GetConnectionString("NorthWindConnect");
+            // R?cup?re la cha?ne de connexion ? la base dans les param?tres
+            string? connect = builder.Configuration.GetConnectionString("Northwind2Connect");
 
             // Add services to the container.
-            //enregitre la classe de contexte de données comme service
-            // en lui indiquant la connexion à utiliser
+            // Enregistre la classe de contexte de donn?es comme service
+            // en lui indiquant la connexion ? utiliser, et d?sactive le suivi des modifications
             builder.Services.AddDbContext<ContexteNorthwind>(opt => opt
-            .UseSqlServer(connect)
-            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)// annule le suivi des modifications
-            .EnableSensitiveDataLogging()); // ajoute les donnees sensibles dans les logs (utile pour le dev, pas en prod)
+                .UseSqlServer(connect)
+                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+                .EnableSensitiveDataLogging());
 
-            //enregistre le service métier
+            // Enregistre les services m?tier
             builder.Services.AddScoped<IServiceEmployes, ServiceEmployes>();
-         builder.Services.AddScoped<IServiceCommandes, ServiceCommandes>();
+            builder.Services.AddScoped<IServiceCommandes, ServiceCommandes>();
+            builder.Services.AddScoped<IServiceProduits, ServiceProduits>();
+            builder.Services.AddScoped<IServiceClients, ServiceClients>();
 
             // Utilise Serilog comme unique fournisseur de journalisation
-            var logger = new LoggerConfiguration()
-                 .ReadFrom.Configuration(builder.Configuration)
-                 .Enrich.FromLogContext()
-                 .CreateLogger();
-            builder.Logging.ClearProviders();
-            builder.Logging.AddSerilog(logger);
+            /*var logger = new LoggerConfiguration()
+				 .ReadFrom.Configuration(builder.Configuration)
+				 .Enrich.FromLogContext()
+				 .CreateLogger();
+			builder.Logging.ClearProviders();
+			builder.Logging.AddSerilog(logger);*/
 
+            // Enregistre les contrôleurs et ajoute une option de sérialisation
+            // pour interrompre les références circulaires infinies
+            builder.Services.AddControllers()
+                .AddNewtonsoftJson()
+                .AddJsonOptions(opt =>
+                opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
-
-            builder.Services.AddControllers().AddJsonOptions(opt =>
-         opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
-
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
@@ -57,12 +57,10 @@ namespace NorthWind
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
 
-            //Middleware de gestion des erreurs personnalisée
-            app.UseMiddleware<CustomErrorResponseMiddleware>();
-
+            // Middleware personnalis? de gestion d'erreurs
+            //app.UseMiddleware<CustomErrorResponseMiddleware>(app.Logger);
 
             app.MapControllers();
 

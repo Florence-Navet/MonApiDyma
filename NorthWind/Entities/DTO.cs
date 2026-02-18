@@ -1,4 +1,4 @@
-ï»¿namespace NorthWind.Entities
+namespace Northwind.Entities
 {
    public class FormEmploye
    {
@@ -12,7 +12,7 @@
       public DateTime? DateNaissance { get; set; }
       public DateTime? DateEmbauche { get; set; }
 
-      // Pour rÃ©cupÃ©rer la photo et la biographie sous forme de fichiers
+      // Pour récupérer la photo et la biographie sous forme de fichiers
       public IFormFile? Photo { get; set; }
       public IFormFile? Notes { get; set; }
 

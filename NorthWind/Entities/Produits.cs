@@ -1,4 +1,4 @@
-﻿namespace NorthWind.Entities
+namespace Northwind.Entities
 {
    public class Categorie
    {
@@ -28,6 +28,6 @@
       public short NiveauReappro { get; set; }
       public bool Arrete { get; set; }
 
-      public Categorie Catégorie { get; set; } = new();
+      public Categorie Cat�gorie { get; set; } = new();
    }
 }

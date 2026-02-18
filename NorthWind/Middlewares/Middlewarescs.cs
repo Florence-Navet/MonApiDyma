@@ -1,23 +1,22 @@
-ï»¿
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
-using NorthWind.Data;
+using Northwind.Data;
+using Northwind.Data;
+using System.Net;
 
-
-
-namespace NorthWind.Middlewares
+namespace Northwind.Middlewares
 {
     public class CustomErrorResponseMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger _logger;
 
-        public CustomErrorResponseMiddleware(RequestDelegate next)
+        public CustomErrorResponseMiddleware(RequestDelegate next, ILogger logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
@@ -28,13 +27,19 @@ namespace NorthWind.Middlewares
             }
             catch (DbUpdateException ex)
             {
-                // On gÃ¨re les exceptions Ã©mises par la base en renvoyant une rÃ©ponse adaptÃ©e
+                // On gère les exceptions émises par la base en renvoyant une réponse adaptée
 
                 ProblemDetails pb = ex.ConvertToProblemDetails();
                 context.Response.ContentType = "application/json";
                 context.Response.StatusCode = pb.Status ?? 500;
-                // Ecrit le dÃ©tail du problÃ¨me dans le corps de la rÃ©ponse
+                // Ecrit le détail du problème dans le corps de la réponse
                 await context.Response.WriteAsJsonAsync(pb);
+            }
+            catch (Exception e)
+            {
+                // Journalise les autres exceptions avant de les réémettre
+                _logger.LogError(e, "Erreur serveur non gérée.");
+                throw;
             }
         }
     }

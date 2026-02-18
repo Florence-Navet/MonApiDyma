@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace NorthWind.Data.Migrations
+namespace Northwind.Data.Migrations
 {
     /// <inheritdoc />
     public partial class DtoAffection : Migration

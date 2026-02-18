@@ -1,9 +1,9 @@
-ï»¿using Microsoft.EntityFrameworkCore;
-using NorthWind.Entities;
+using Microsoft.EntityFrameworkCore;
+using Northwind.Entities;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace NorthWind.Entities
+namespace Northwind.Entities
 {
    public class Employe
    {
@@ -19,7 +19,7 @@ namespace NorthWind.Entities
       public byte[]? Photo { get; set; }
       public string? Notes { get; set; }
 
-      // PropriÃ©tÃ©s de navigation
+      // Propriétés de navigation
       public virtual Adresse Adresse { get; set; } = new();
       public virtual List<Territoire> Territoires { get; set; } = new();
    }
@@ -48,8 +48,8 @@ namespace NorthWind.Entities
       public int IdRegion { get; set; }
       public string Nom { get; set; } = string.Empty;
 
-      // PropriÃ©tÃ© de navigation
-      public virtual Region RÃ©gion { get; set; } = null!;
+      // Propriété de navigation
+      public virtual Region Région { get; set; } = null!;
    }
 
    public class Region
@@ -57,7 +57,7 @@ namespace NorthWind.Entities
       public int Id { get; set; }
       public string Nom { get; set; } = string.Empty;
 
-      // PropriÃ©tÃ©s de navigation
+      // Propriétés de navigation
       public virtual List<Territoire> Territoires { get; set; } = new();
    }
 
@@ -73,10 +73,10 @@ namespace NorthWind.Entities
 		public Guid IdAdresse { get; set; }
 		public int? IdManager { get; set; }
 
-		[Required(ErrorMessage = "Le nom doit Ãªtre renseignÃ©")]
+		[Required(ErrorMessage = "Le nom doit être renseigné")]
 		public string Nom { get; set; } = string.Empty;
 
-		[Required(ErrorMessage = "Le prÃ©nom doit Ãªtre renseignÃ©e")]
+		[Required(ErrorMessage = "Le prénom doit être renseignée")]
 		public string Prenom { get; set; } = string.Empty;
 
 		public string? Fonction { get; set; }
@@ -85,20 +85,20 @@ namespace NorthWind.Entities
 		public DateTime? DateEmbauche { get; set; }
 		public byte[]? Photo { get; set; }
 
-		[MaxLength(1000, ErrorMessage = "La biographie ne doit pas dÃ©passer 1000 caractÃ¨res")]
+		[MaxLength(1000, ErrorMessage = "La biographie ne doit pas dépasser 1000 caractères")]
 		public string? Notes { get; set; }
 
-		// PropriÃ©tÃ©s de navigation
+		// Propriétés de navigation
 		public virtual Adresse Adresse { get; set; } = new();
 		public virtual List<Territoire> Territoires { get; set; } = new();
 
-		// MÃ©thode de validation
+		// Méthode de validation
 		public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
 		{
 			if (DateEmbauche != null && DateNaissance != null &&
 				DateEmbauche < DateNaissance.Value.AddYears(18))
 			{
-				yield return new ValidationResult("La personne doit avoir au moins 18 ans pour Ãªtre embauchÃ©e");
+				yield return new ValidationResult("La personne doit avoir au moins 18 ans pour être embauchée");
 			}
 		}
 	}
@@ -107,21 +107,21 @@ namespace NorthWind.Entities
 	{
 		public Guid Id { get; set; }
 
-		[Required(ErrorMessage = "La rue doit Ãªtre renseignÃ©e")]
+		[Required(ErrorMessage = "La rue doit être renseignée")]
 		public string Rue { get; set; } = string.Empty;
 
-		[Required(ErrorMessage = "La ville doit Ãªtre renseignÃ©e")]
+		[Required(ErrorMessage = "La ville doit être renseignée")]
 		public string Ville { get; set; } = string.Empty;
 
-		[Required(ErrorMessage = "Le code postal doit Ãªtre renseignÃ©")]
+		[Required(ErrorMessage = "Le code postal doit être renseigné")]
 		public string CodePostal { get; set; } = string.Empty;
 
-		[Required(ErrorMessage = "Le pays doit Ãªtre renseignÃ©")]
+		[Required(ErrorMessage = "Le pays doit être renseigné")]
 		public string Pays { get; set; } = string.Empty;
 
 		public string? Region { get; set; }
 
-		[Phone(ErrorMessage = "Le NÂ° ne doit contenir que des chiffres et Ã©ventuellement les caractÃ¨res suivants : + - . ( ) et espace")]
+		[Phone(ErrorMessage = "Le N° ne doit contenir que des chiffres et éventuellement les caractères suivants : + - . ( ) et espace")]
 		public string? Tel { get; set; }
 	}*/
 #endregion

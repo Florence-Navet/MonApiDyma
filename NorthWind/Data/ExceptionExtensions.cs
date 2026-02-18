@@ -1,9 +1,9 @@
-ï»¿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 
-namespace NorthWind.Data
+namespace Northwind.Data
 {
     public static class DbUpdateExceptionExtensions
     {
@@ -16,43 +16,43 @@ namespace NorthWind.Data
         private const int NumericValueError = 8115;
 
         // Traduit une DbUpdateException en un objet de type ProblemDetails
-        // utilisable pour construire une rÃ©ponse HTTP
+        // utilisable pour construire une réponse HTTP
         public static ProblemDetails ConvertToProblemDetails(this DbUpdateException ex)
         {
             if (ex.InnerException is not SqlException sqlEx)
-                throw new NotImplementedException("Traduction des erreurs en rÃ©ponses HTTP non implÃ©mentÃ©e pour ce SGBD");
+                throw new NotImplementedException("Traduction des erreurs en réponses HTTP non implémentée pour ce SGBD");
 
             (HttpStatusCode StatusCode, string Message) err;
             switch (sqlEx.Number)
             {
                 case NotNullError:
-                    err = (HttpStatusCode.BadRequest, "Impossible d'affecter la valeur Null Ã  un champ non nullable.");
+                    err = (HttpStatusCode.BadRequest, "Impossible d'affecter la valeur Null à un champ non nullable.");
                     break;
 
                 case IdentityError:
-                    err = (HttpStatusCode.Conflict, "Impossible d'affecter une valeur Ã  un identifiant auto-incrÃ©mentÃ©.");
+                    err = (HttpStatusCode.Conflict, "Impossible d'affecter une valeur à un identifiant auto-incrémenté.");
                     break;
 
                 case ForeignKeyError:
-                    err = (HttpStatusCode.BadRequest, "La requÃªte fait rÃ©fÃ©rence Ã  un enregistrement qui n'existe pas dans la base\n" +
-                        " ou bien tente de supprimer un enregistrement rÃ©fÃ©rencÃ© ailleurs dans la base");
+                    err = (HttpStatusCode.BadRequest, "La requête fait référence à un enregistrement qui n'existe pas dans la base\n" +
+                        " ou bien tente de supprimer un enregistrement référencé ailleurs dans la base");
                     break;
 
                 case UniqueError:
                 case PrimaryKeyError:
-                    err = (HttpStatusCode.Conflict, "Un enregistrement de mÃªme identifiant existe dÃ©jÃ  dans la base.");
+                    err = (HttpStatusCode.Conflict, "Un enregistrement de même identifiant existe déjà dans la base.");
                     break;
 
                 case NumericValueError:
-                    err = (HttpStatusCode.BadRequest, "Une valeur numÃ©rique incorrecte a Ã©tÃ© fournie.");
+                    err = (HttpStatusCode.BadRequest, "Une valeur numérique incorrecte a été fournie.");
                     break;
 
                 case MaxLengthError:
-                    err = (HttpStatusCode.BadRequest, "Une chaÃ®ne trop longue a Ã©tÃ© fournie.");
+                    err = (HttpStatusCode.BadRequest, "Une chaîne trop longue a été fournie.");
                     break;
 
                 default:
-                    err = (HttpStatusCode.InternalServerError, "Erreur non gÃ©rÃ©e Ã  l'enregistrement dans la base de donnÃ©es.");
+                    err = (HttpStatusCode.InternalServerError, "Erreur non gérée à l'enregistrement dans la base de données.");
                     break;
             }
 

@@ -1,17 +1,18 @@
-ï»¿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using NorthWind.Data;
-using NorthWind.Entities;
-using NorthWind.Services;
+using Northwind.Controllers;
+using Northwind.Services;
+using Northwind.Entities;
+using Northwind.Data;
+using Northwind.Entities;
+using Northwind.Services;
+using System.Data;
 
-namespace NorthWind.Controllers
+namespace Northwind.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
     public class EmployesController : ControllerBase
@@ -24,147 +25,133 @@ namespace NorthWind.Controllers
             _serviceEmp = service;
             _logger = logger;
         }
-      #region Requete GET
 
-      // GET: api/Employes
-      [HttpGet]
-      public async Task<ActionResult<IEnumerable<Employe>>> GetEmployÃ©s(
-           [FromQuery] string? rechercheNom, [FromQuery] DateTime? dateEmbaucheMax)
-      {
-         var employÃ©s = await _serviceEmp.ObtenirEmployes(rechercheNom, dateEmbaucheMax);
-         return Ok(employÃ©s);
-      }
+        #region Requêtes GET
 
-      // GET: api/Employes/5
-      //[HttpGet("{id}")] ou
-      [HttpGet]
-      [Route("{id}")]
-      public async Task<ActionResult<Employe>> GetEmploye(int id)
-      {
-         var employe = await _serviceEmp.ObtenirEmploye(id);
+        // GET: api/Employes?rechercheNom=an
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Employe>>> GetEmployés([FromQuery] string? rechercheNom)
+        {
+            List<Employe> employés = await _serviceEmp.ObtenirEmployés(rechercheNom);
 
-         if (employe == null)
-         {
-            return NotFound();
-         }
-
-         return Ok(employe);
-      }
-
-      // GET: api/Regions/{id}
-      [HttpGet("/api/Regions/{id}")]
-      public async Task<ActionResult<Region>> GetRÃ©gions(int id)
-      {
-         Region? region = await _serviceEmp.ObtenirRÃ©gion(id);
-
-         if (region == null)
-         {
-            return NotFound();
-         }
-
-         return Ok(region);
-      }
-
-      #endregion
-
-      #region Requete POST
-      //POST : api/ Employes
-      [HttpPost]
-      public async Task<ActionResult<Employe>> PostEmployÃ©(Employe emp)
-      {
-            try
-            {
-                // enregistre l'employe dans la base et le recuperer avec son ID genere automatiquement
-                Employe res = await _serviceEmp.AjouterEmployÃ©(emp);
-
-            //Renvoie reponde 201 avec l'entÃªte
-            return CreatedAtAction(nameof(GetEmploye), new { id = res.Id }, res);
-
-                //}
-                //gestion d'erreur de la class DbUpdateException
-                //catch (DbUpdateException e)
-                //{
-                //    ProblemDetails pb = e.ConvertToProblemDetails();
-                //    //detail : msg erreur, instance, statue: code http, titre : type d'erreur
-                //    return Problem(pb.Detail, null, pb.Status, pb.Title);
-
-            }
-            //gestion erreur de ControllerBaseEx
-            catch (Exception e)
-            {
-                //return this.CustomResponseForError(e);
-                return this.CustomResponseForError(e, emp, _logger);
-            }
-
-            //si je desactive le try catch, le middleware de gestion des erreurs de bdd s'en charge
-
+            return Ok(employés);
         }
 
-        //POST : api/affectations
+        // GET: api/Employes?dateEmbaucheMax=2013-01-01
+        /*[HttpGet]
+		public async Task<ActionResult<IEnumerable<Employe>>>
+			GetEmployés([FromQuery] string? rechercheNom, [FromQuery] DateTime? dateEmbaucheMax)
+		{
+			var employés = await _serviceEmp.ObtenirEmployés(rechercheNom, dateEmbaucheMax);
+
+			return Ok(employés);
+		}*/
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Employe>> GetEmployé(int id)
+        {
+            Employe? employé = await _serviceEmp.ObtenirEmployé(id);
+
+            if (employé == null) return NotFound();
+
+            return Ok(employé);
+        }
+
+        [HttpGet("/api/Regions/{id}")]
+        public async Task<ActionResult<Region>> GetRégion(int id)
+        {
+            Region? region = await _serviceEmp.ObtenirRégion(id);
+
+            if (region == null) return NotFound();
+
+            return Ok(region);
+        }
+        #endregion
+
+        #region Requêtes POST
+
+        // POST: api/Employes
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<Employe>> PostEmployé(Employe emp)
+        {
+            try
+            {
+                // Enregistre l’employé dans la base et le récupère avec son Id généré automatiquement
+                Employe res = await _serviceEmp.AjouterEmployé(emp);
+
+                // Renvoie une réponse de code 201 avec l'en-tête 
+                // "location: <url d'accès à l’employé>" et un corps contenant l’employé
+                return CreatedAtAction(nameof(GetEmployé), new { id = res.Id }, res);
+            }
+            catch (Exception e)
+            {
+                return this.CustomResponseForError(e);
+                //return this.CustomResponseForError(e, emp, _logger);
+            }
+        }
+
+        // POST: api/Affectations
         [HttpPost("/api/Affectations")]
-      public async Task<ActionResult<Affectation>> PostAffectation([FromForm] Affectation a)
-      {
-         //enregistre les donnees en base
-         await _serviceEmp.AjouterAffectation(a);
+        public async Task<ActionResult<Affectation>> PostAffectation([FromForm] Affectation a)
+        {
+            //Enregistre les données en base
+            await _serviceEmp.AjouterAffectation(a);
 
-         //renvoie reponse 201 avec entete
-         return CreatedAtAction(nameof(GetEmploye), new { id = a.IdEmploye }, a);
-      }
+            // Renvoie une réponse de code 201 avec l'en-tête 
+            // "location: <url d'accès à l’employé>" et un corps contenant son affectation
+            return CreatedAtAction(nameof(GetEmployé), new { id = a.IdEmploye }, a);
+        }
 
-      //POST : api/Employes/formdata
-      [HttpPost("formdata")]
-      public async Task<ActionResult<Employe>> PostEmployÃ©FormData([FromForm] FormEmploye fe)
-      {
-         Employe emp = new()
-         {
-            IdAdresse = fe.IdAdresse,
-            IdManager = fe.IdManager,
-            Nom = fe.Nom,
-            Prenom = fe.Prenom,
-            Fonction = fe.Fonction,
-            Civilite = fe.Civilite,
-            DateNaissance = fe.DateNaissance,
-            DateEmbauche = fe.DateEmbauche
-         };
+        // POST: api/Employes/formdata
+        [HttpPost("formdata")]
+        public async Task<ActionResult<Employe>> PostEmployéFormData([FromForm] FormEmploye fe)
+        {
+            Employe emp = new()
+            {
+                IdAdresse = fe.IdAdresse,
+                IdManager = fe.IdManager,
+                Nom = fe.Nom,
+                Prenom = fe.Prenom,
+                Fonction = fe.Fonction,
+                Civilite = fe.Civilite,
+                DateNaissance = fe.DateNaissance,
+                DateEmbauche = fe.DateEmbauche
+            };
 
-         //recupere les donnees de l'adresse
+            // Récupère les données de l'adresse
+            emp.Adresse = new()
+            {
+                Id = fe.Adresse.Id,
+                Rue = fe.Adresse.Rue,
+                CodePostal = fe.Adresse.CodePostal,
+                Ville = fe.Adresse.Ville,
+                Region = fe.Adresse.Region,
+                Pays = fe.Adresse.Pays,
+                Tel = fe.Adresse.Tel
+            };
 
-         emp.Adresse = new()
-         {
-            Id = fe.Adresse.Id,
-            Rue = fe.Adresse.Rue,
-            CodePostal = fe.Adresse.CodePostal,
-            Ville = fe.Adresse.Ville,
-            Region = fe.Adresse.Region,
-            Pays = fe.Adresse.Pays,
-            Tel = fe.Adresse.Tel
-         };
+            // Récupère les données du fichier photo
+            if (fe.Photo != null)
+            {
+                using Stream stream = fe.Photo.OpenReadStream();
+                emp.Photo = new byte[fe.Photo.Length];
+                await stream.ReadAsync(emp.Photo);
+            }
 
-         //recuperer les donnes du fichier photo
-         if (fe.Photo != null)
-         {
-            using Stream stream = fe.Photo.OpenReadStream();// envoie ss type de flux en c#
-            emp.Photo = new byte[fe.Photo.Length]; // transforme en tableau de byte de la longueur de la photo
-            await stream.ReadAsync(emp.Photo); //transfere le stream dans le tableau de byte
-         }
+            // Récupère les données du fichier notes
+            if (fe.Notes != null)
+            {
+                using StreamReader reader = new(fe.Notes.OpenReadStream());
+                emp.Notes = await reader.ReadToEndAsync();
+            }
 
-         // RÃ©cupÃ¨re les donnÃ©es du fichier notes
-         if (fe.Notes != null) // verifions si fichier est diff de null
-         {
-            using StreamReader reader = new(fe.Notes.OpenReadStream());  //lire le contenu du fichier en utilisant le constructeur
-            emp.Notes = await reader.ReadToEndAsync(); //transfere le contenu dans une chaine en utilisant sa methode
-         }
+            Employe res = await _serviceEmp.AjouterEmployé(emp);
 
-         Employe res = await _serviceEmp.AjouterEmployÃ©(emp);
-
-         // RenvoieÂ uneÂ rÃ©ponseÂ de code 201 avecÂ l'en-tÃªteÂ 
-         //Â "location:Â <urlÂ d'accÃ¨s Ã  lâ€™employÃ©>"Â etÂ unÂ corpsÂ contenantÂ lâ€™employÃ©
-         return CreatedAtAction(nameof(GetEmploye), new { id = emp.Id }, res); // permet l'envoie d'une 201 pour l'envoie d'un enregistrement et cree le location
-      }
-
-      #endregion
-
-
-
-   }
+            // Renvoie une réponse de code 201 avec l'en-tête 
+            // "location: <url d'accès à l’employé>" et un corps contenant l’employé
+            return CreatedAtAction(nameof(GetEmployé), new { id = emp.Id }, res);
+        }
+        #endregion
+    }
 }

@@ -1,4 +1,4 @@
-ï»¿using NorthWind.Entities;
+using Northwind.Entities;
 
 public class Client
 {
@@ -31,7 +31,7 @@ public class Commande
    public DateTime? DateLivraison { get; set; }
    public decimal? FraisLivraison { get; set; }
 
-   // PropriÃ©tÃ©s de navigation pour avoir d'erreur code 400
+   // Propriétés de navigation pour avoir d'erreur code 400
    public virtual List<LigneCommande> Lignes { get; set; } = new();
    public virtual Employe? Employe { get; set; }  = new(); // deja existant
     public virtual Adresse? Adresse { get; set; } = new(); // deja existant

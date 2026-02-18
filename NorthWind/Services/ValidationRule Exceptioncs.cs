@@ -1,4 +1,4 @@
-﻿namespace Northwind.Services
+namespace Northwind.Services
 {
     public class ValidationRulesException : Exception
     {

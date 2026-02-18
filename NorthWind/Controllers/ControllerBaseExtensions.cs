@@ -1,54 +1,36 @@
-Ôªøusing Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.JsonPatch.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using NorthWind.Data;
 using Northwind.Services;
+using Northwind.Data;
+using Northwind.Services;
+using System.ComponentModel;
+using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using System.Net;
 
-
-namespace NorthWind.Controllers
+namespace Northwind.Controllers
 {
     public static class ControllerBaseExtensions
     {
-        // Renvoie une r√©ponse HTTP personnalis√©e pour les erreurs
+        // Renvoie une rÈponse HTTP personnalisÈe pour les erreurs
         public static ActionResult CustomResponseForError(this ControllerBase controller, Exception e)
         {
             if (e is DbUpdateConcurrencyException)
             {
-                return controller.Problem("L'entit√© ou au moins l'une de ses entit√©s fille n'exite pas en base.",
-                    null, (int)HttpStatusCode.NotFound, "Aucune modification enregistr√©e en base."); // renvoie un 404
+                return controller.Problem("L'entitÈ ou au moins l'une de ses entitÈs filles n'existe pas en base.",
+                    null, (int)HttpStatusCode.NotFound, "Aucune modification enregistrÈe en base.");
             }
-            else if (e is DbUpdateException dbe)
+            else if (e is DbUpdateException || e is SqlException)
             {
-                ProblemDetails pb = dbe.ConvertToProblemDetails();
+                ProblemDetails pb = ((DbUpdateException)e).ConvertToProblemDetails();
                 return controller.Problem(pb.Detail, null, pb.Status, pb.Title);
             }
-            else if (e is ValidationRulesException vre)
+            else if (e is JsonPatchException)
             {
-                ValidationProblemDetails vpd = new(vre.Errors);
-                return controller.ValidationProblem(vpd);
-            }
-            else throw e;
-        }
-
-        // Journalise une erreur avec le d√©tail de l'action et de l'entit√© concern√©es,
-        // puis renvoie une r√©ponse HTTP personnalis√©e
-        public static ActionResult CustomResponseForError<T>(this ControllerBase controller,
-            Exception e, T entity, ILogger logger, [CallerMemberName] string? action = null)
-        {
-            if (e is DbUpdateException dbe)
-            {
-                ProblemDetails pb = dbe.ConvertToProblemDetails();
-                logger.LogWarning("Action {action}, entit√© de type {type}\n{d√©tail}\n{entity}",
-                    action,
-                    entity?.GetType().Name,
-                    pb.Detail,
-                    JsonSerializer.Serialize(entity, new JsonSerializerOptions { WriteIndented = true }));
-
-                return controller.Problem(pb.Detail, null, pb.Status, pb.Title);
+                return controller.Problem("Le patch contient des opÈrations non prises en charge pour cette ressource.",
+                    null, (int)HttpStatusCode.BadRequest, "PATCH non appliquÈ");
             }
             else if (e is ValidationRulesException vre)
             {

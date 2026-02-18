@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using NorthWind;
 
-namespace NorthWind.Controllers
+namespace Northwind.Controllers
 {
     [ApiController]
     [Route("[controller]")]

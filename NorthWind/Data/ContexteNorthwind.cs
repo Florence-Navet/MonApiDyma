@@ -1,7 +1,7 @@
-ï»¿using Microsoft.EntityFrameworkCore;
-using NorthWind.Entities;
+using Microsoft.EntityFrameworkCore;
+using Northwind.Entities;
 
-namespace NorthWind.Data
+namespace Northwind.Data
 {
    public class ContexteNorthwind : DbContext
    {
@@ -11,8 +11,8 @@ namespace NorthWind.Data
       }
 
       public virtual DbSet<Adresse> Adresses { get; set; }
-      public virtual DbSet<Employe> EmployÃ©s { get; set; }
-      public virtual DbSet<Region> RÃ©gions { get; set; }
+      public virtual DbSet<Employe> Employés { get; set; }
+      public virtual DbSet<Region> Régions { get; set; }
       public virtual DbSet<Territoire> Territoires { get; set; }
       public virtual DbSet<Affectation> Affectations { get; set; }
 
@@ -26,7 +26,7 @@ namespace NorthWind.Data
 
       protected override void OnModelCreating(ModelBuilder modelBuilder)
       {
-         #region EmployÃ©s, adresses, territoires
+         #region Employés, adresses, territoires
          modelBuilder.Entity<Adresse>(entity =>
          {
             entity.HasKey(e => e.Id);
@@ -51,10 +51,10 @@ namespace NorthWind.Data
             entity.Property(e => e.Fonction).HasMaxLength(40);
             entity.Property(e => e.Civilite).HasMaxLength(40);
 
-            // Relation de la table Employe sur elle-mÃªme 
+            // Relation de la table Employe sur elle-même 
             entity.HasOne<Employe>().WithMany().HasForeignKey(d => d.IdManager);
 
-            // Relation Employe - Adresse de cardinalitÃ©s 0,1 - 1,1
+            // Relation Employe - Adresse de cardinalités 0,1 - 1,1
             entity.HasOne(e => e.Adresse).WithOne().HasForeignKey<Employe>(d => d.IdAdresse)
                   .OnDelete(DeleteBehavior.NoAction);
          });
@@ -86,19 +86,19 @@ namespace NorthWind.Data
             entity.Property(e => e.Id).HasMaxLength(20).IsUnicode(false);
             entity.Property(e => e.Nom).HasMaxLength(40);
 
-            // Relation avec la rÃ©gion utilisant une propriÃ©tÃ© de navigation
-            entity.HasOne(t => t.RÃ©gion).WithMany(r => r.Territoires)
+            // Relation avec la région utilisant une propriété de navigation
+            entity.HasOne(t => t.Région).WithMany(r => r.Territoires)
                   .HasForeignKey(d => d.IdRegion).OnDelete(DeleteBehavior.NoAction);
 
-            // CrÃ©e la relation N-N avec Employe en utilisant l'entitÃ© Affectation comme entitÃ© d'association
-            // ainsi qu'une propriÃ©tÃ© de navigation
+            // Crée la relation N-N avec Employe en utilisant l'entité Affectation comme entité d'association
+            // ainsi qu'une propriété de navigation
             entity.HasMany<Employe>().WithMany(e => e.Territoires).UsingEntity<Affectation>(
                l => l.HasOne<Employe>().WithMany().HasForeignKey(a => a.IdEmploye),
                r => r.HasOne<Territoire>().WithMany().HasForeignKey(a => a.IdTerritoire));
          });
          #endregion
 
-         #region CatÃ©gories, produits, fournisseurs
+         #region Catégories, produits, fournisseurs
          modelBuilder.Entity<Categorie>(entity =>
          {
             entity.HasKey(e => e.Id);
@@ -116,7 +116,7 @@ namespace NorthWind.Data
             entity.Property(e => e.PU).HasColumnType("decimal(8,2)");
             entity.Property(e => e.Arrete).HasDefaultValue(false);
 
-            entity.HasOne(p => p.CatÃ©gorie).WithMany()
+            entity.HasOne(p => p.Catégorie).WithMany()
                   .HasForeignKey(p => p.IdCategorie)
                   .OnDelete(DeleteBehavior.NoAction);
 
