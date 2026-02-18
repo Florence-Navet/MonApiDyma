@@ -1,10 +1,6 @@
 using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.JsonPatch.Adapters;
-using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Northwind.Data;
-using Northwind.Entities;
 using Northwind.Data;
 using Northwind.Entities;
 
@@ -72,7 +68,7 @@ namespace Northwind.Services
         {
             produit.Catégorie = null!;
 
-            EntityEntry<Produit> ent = _contexte.Update(produit);
+            EntityEntry<Produit> ent = _contexte.Update(produit); // update fait un add si l'id n'est pas fourni ou est à 0
             await _contexte.SaveChangesAsync();
 
             // Renvoie le produit mis à jour ou créé avec son id généré par la base
