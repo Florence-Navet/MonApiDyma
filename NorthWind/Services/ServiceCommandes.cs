@@ -143,7 +143,7 @@ namespace Northwind.Services
             await ControlerCommande(cde);
 
             // Passe la commande et ses lignes à l'état Modified
-            _contexte.Entry(cde).State = EntityState.Modified;
+            _contexte.Entry(cde).State = EntityState.Modified; // avec entry on s'occupe pas des entités filles ni sur ses lignes
             foreach (var ligne in cde.Lignes)
             {
                 _contexte.Entry(ligne).State = EntityState.Modified;
@@ -153,6 +153,7 @@ namespace Northwind.Services
         }
 
         // Met à jour le taux de réduction sur toutes les lignes d'une commande
+        //meme modif sur toutes les lignes de commande
         public async Task<int> ModifierCommande2(int idCommande, float tauxReduc)
         {
             int nbmodifs = await _contexte.LignesCommandes.Where(lc => lc.IdCommande == idCommande)
