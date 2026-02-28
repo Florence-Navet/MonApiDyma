@@ -11,13 +11,13 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 //capture les exceptions de bdd resolvables par migrations
-//et envoie une réponse HTTP invitant à migrer la base (à utilise en mode dev uniquement)
+//et envoie une rï¿½ponse HTTP invitant ï¿½ migrer la base (ï¿½ utilise en mode dev uniquement)
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-//Ajoute des svc d 'identités communs :
-// - une interface de jtons pour générer des jetons afin de reintinaliser les mdp,
-// modifier l'email et modifier le n° de tel, et pour l'auth à 2 facteurs
-// - configure l'auth pour utiliser les cookies d'identité
+//Ajoute des svc d 'identitï¿½s communs :
+// - une interface de jtons pour gï¿½nï¿½rer des jetons afin de reintinaliser les mdp,
+// modifier l'email et modifier le nï¿½ de tel, et pour l'auth ï¿½ 2 facteurs
+// - configure l'auth pour utiliser les cookies d'identitï¿½
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true) // exige confirmation par mail
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -41,22 +41,22 @@ options.Authentication.CoordinateClientLifetimesWithUserSession = true)
     {
         ClientId = "Client1",
         ClientSecrets = {new Secret("Secret1".Sha256())},
-        AllowedGrantTypes = GrantTypes.Code, // granttype  doit fournir un code secret pour obtenir un jeton d'accès
+        AllowedGrantTypes = GrantTypes.Code, // granttype  doit fournir un code secret pour obtenir un jeton d'accï¿½s
 
         //Urls auxquelles envoyer les jetons
         RedirectUris = {"https://localhost:6001/signin-oidc"},//5001
-        //Urls  de redirection après déconnexion
+        //Urls  de redirection aprï¿½s dï¿½connexion
         PostLogoutRedirectUris = {"https://localhost:6001/signout-callback-oidc"},
-        // Url pour envoyer une demande de deconnexion au serveur d'identité
+        // Url pour envoyer une demande de deconnexion au serveur d'identitï¿½
         FrontChannelLogoutUri = "https://localhost:6001/signout-oidc",
 
-        // Etendue d'API autorisée
+        // Etendue d'API autorisï¿½e
         AllowedScopes = {"openid", "profile"},
     }
     })
     //Indique d'utiiser ASP. Net core Identity pour la gestion des profils et revendications
     .AddAspNetIdentity<ApplicationUser>();
-//ajouter la journalisation au niveau debug des évènements émis par Duende
+//ajouter la journalisation au niveau debug des ï¿½vï¿½nements ï¿½mis par Duende
 builder.Services.AddLogging(options =>
 {
     options.AddFilter("Duende", LogLevel.Debug);
@@ -68,13 +68,13 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-   app.UseMigrationsEndPoint(); // on migre la base au moment de l'éxécution de l'application en mode dev 
+   app.UseMigrationsEndPoint(); // on migre la base au moment de l'ï¿½xï¿½cution de l'application en mode dev 
 }
 else
 {
    app.UseExceptionHandler("/Error");
-    // ajoute un en-tete de reponse qui informe les navigateurs que le site ne doit être accessible qu'en HTTPS,
-    // et que toute tentative future d'y accéder via HTTO doit être automatiquement convertie en HTTPS
+    // ajoute un en-tete de reponse qui informe les navigateurs que le site ne doit ï¿½tre accessible qu'en HTTPS,
+    // et que toute tentative future d'y accï¿½der via HTTO doit ï¿½tre automatiquement convertie en HTTPS
    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
    app.UseHsts();
 }
