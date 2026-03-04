@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Northwind.Data;
 using Northwind.Services;
@@ -46,6 +48,27 @@ namespace Northwind
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            //ajoute le service d'authentification par porteur de jetons JWT
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    //url d'accès au serveur d'identite
+                    options.Authority = builder.Configuration["IdentityServerUrl"];
+                    options.TokenValidationParameters.ValidateAudience = false; //on ne valide pas l'audience du jeton
+
+                    // Tolérance sur la durée de validité du jeton 
+                    options.TokenValidationParameters.ClockSkew = TimeSpan.Zero;
+                });
+
+            //ttes les requetes devront contenir un jeton d'authentification valide
+            builder.Services.AddAuthorization(options =>
+            {
+                //specifie que tout utilisateur de l'api doit etre authentifié
+                options.FallbackPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                    .Build();
+            });
 
             var app = builder.Build();
 

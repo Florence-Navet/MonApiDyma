@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Northwind.Data;
 using Northwind.Entities;
-using Northwind.Data;
-using Northwind.Entities;
 
 namespace Northwind.Services
 {
