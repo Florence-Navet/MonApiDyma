@@ -1,1 +1,1 @@
-﻿SELECT Nom, Prenom FROM Employes;
+﻿SELECT * FROM Clients;

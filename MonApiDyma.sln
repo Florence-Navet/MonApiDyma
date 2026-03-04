@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36518.9 d17.14
+VisualStudioVersion = 17.14.36518.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NorthWind", "NorthWind\NorthWind.csproj", "{3DF4A90B-9BEF-4EBD-A169-096F9D0E44A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoteIdentiyServer", "HoteIdentiyServer\HoteIdentiyServer.csproj", "{2C11B61F-2678-466B-9D19-5C8EECB407CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{3DF4A90B-9BEF-4EBD-A169-096F9D0E44A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3DF4A90B-9BEF-4EBD-A169-096F9D0E44A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3DF4A90B-9BEF-4EBD-A169-096F9D0E44A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C11B61F-2678-466B-9D19-5C8EECB407CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C11B61F-2678-466B-9D19-5C8EECB407CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C11B61F-2678-466B-9D19-5C8EECB407CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C11B61F-2678-466B-9D19-5C8EECB407CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -12,7 +12,7 @@ namespace Northwind
             var builder = WebApplication.CreateBuilder(args);
 
             // R?cup?re la cha?ne de connexion ? la base dans les param?tres
-            string? connect = builder.Configuration.GetConnectionString("Northwind2Connect");
+            string? connect = builder.Configuration.GetConnectionString("NorthwindConnect");
 
             // Add services to the container.
             // Enregistre la classe de contexte de donn?es comme service
