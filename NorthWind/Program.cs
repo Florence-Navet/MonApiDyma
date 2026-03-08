@@ -41,7 +41,8 @@ namespace Northwind
             // Enregistre les contrôleurs et ajoute une option de sérialisation
             // pour interrompre les références circulaires infinies
             builder.Services.AddControllers()
-                .AddNewtonsoftJson()
+                .AddNewtonsoftJson(opt => 
+                opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
                 .AddJsonOptions(opt =>
                 opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
