@@ -1,12 +1,6 @@
-// Copyright (c) Duende Software. All rights reserved.
-// Licensed under the MIT License. See LICENSE in the project root for license information.
-
 using Duende.Bff;
-using Duende.Bff.Blazor;
 using Duende.Bff.Yarp;
 using Microsoft.IdentityModel.Tokens;
-using Duende.AccessTokenManagement.OpenIdConnect;
-using Duende.Bff.AccessTokenManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,80 +9,74 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-builder.Services.AddBff()
-    .AddRemoteApis()
-    .AddServerSideSessions() // Add in-memory implementation of server side sessions
-    .AddBlazorServer();
+builder.Services.AddBff().AddRemoteApis();
 
 builder.Services.AddAuthentication(options =>
     {
-        options.DefaultScheme = "cookie";
-        options.DefaultChallengeScheme = "oidc"; // auth par jeton ou oidc connect
-        options.DefaultSignOutScheme = "oidc"; // page protege alors qu'il est pas authentifie, on redirige vers la page de login du serveur d'identite
+       // Schémas d'authentification par défaut
+       options.DefaultScheme = "cookie"; // toutes les requêtes -> cookie d'authentification
+        options.DefaultChallengeScheme = "oidc"; // page protégé -> user non authentifié 
+       options.DefaultSignOutScheme = "oidc"; // déconnexion -> redirection vers le fournisseur d'identité pour terminer la session
     })
+    // Authentification par cookie
     .AddCookie("cookie", options =>
     {
-        options.Cookie.Name = "__Host-blazor"; // valeur par defaut 2 semaines
-        options.Cookie.SameSite = SameSiteMode.Strict;
+       options.Cookie.Name = "__Host-blazor";
+       options.Cookie.SameSite = SameSiteMode.Strict; // mesure anti falsification 
     })
+    // Authentification OIDC
     .AddOpenIdConnect("oidc", options =>
     {
-        options.Authority = "https://demo.duendesoftware.com"; // url de demo du serveur d'identite url de appsettings.json
+       // Url d'accès au fournisseur d'identité OIDC 
+       options.Authority = builder.Configuration["IdentityServerUrl"]; // mettre l'adresse de notre serveur
 
-        // id et code  secret de l'appli cliente
-        options.ClientId = "Client1"; 
-        options.ClientSecret = "Secret1";
+       // Id et code secret de l'appli cliente
+       options.ClientId = "Client1";
+       options.ClientSecret = "Secret1";
 
-        //type de flux de communiccation avec le serveur
-        options.ResponseType = "code";
-        options.ResponseMode = "query";
+       // Type de flux de communication avec le serveur
+       options.ResponseType = "code";
+       options.ResponseMode = "query";
 
+       options.Scope.Clear();
+       options.Scope.Add("openid");
+       options.Scope.Add("profile");
+		 options.Scope.Add("entreprise"); // Pour pouvoir récupérer les revendications associées
+       options.Scope.Add("offline_access"); // pour utiliser le jeton d'actualisation
 
-        options.Scope.Clear();
-        options.Scope.Add("openid");
-        options.Scope.Add("profile");
-        //options.Scope.Add("api");
-        options.Scope.Add("offline_access"); // pour utiliser le jeton d'actualisation
+		 // Active la récupération des revendications sur le point de terminaison
+		 // des infos utilisateur après obtention d'un jeton d'identité
+		 options.MapInboundClaims = false;
+       options.GetClaimsFromUserInfoEndpoint = true;
 
+       // Enregistre les jetons d'accès et d'actualisation dans le cookie d'authentification
+       options.SaveTokens = true;
 
-        // Active la recuperation des reventication sur le point de terminaison
-        // des infos utilisateurs après obtention d'un jeton d'identité
-        options.MapInboundClaims = false;
-        options.GetClaimsFromUserInfoEndpoint = true;
-
-        //enrgistre les jetons d'accès et d'actualisation dans le cookie d'authentification
-        options.SaveTokens = true;
-
-        //options.DisableTelemetry = true;
-
-        //paratmètre nécessaires  à OIDC pour valider les jeton
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            NameClaimType = "name",
-            RoleClaimType = "role"
-        };
+       // Paramètres nécessaires à OIDC pour valider les jetons
+       options.TokenValidationParameters = new TokenValidationParameters
+       {
+          NameClaimType = "name",
+          RoleClaimType = "role"
+       };
     });
 
-// Enregistre le service de gesion de jetons pour appli cliente avec utilisateurs
-builder.Services.AddOpenIdConnectAccessTokenManagement();
-
-
+// Enregistre le service de gestion de jetons pour appli clientes avec utilisateurs
+builder.Services.AddUserAccessTokenManagement();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseWebAssemblyDebugging();
+   app.UseWebAssemblyDebugging();
 }
 else
 {
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+   app.UseExceptionHandler("/Error");
+   // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+   app.UseHsts();
 }
 
-//ajout des middlewares de gestion des requetes http
 app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();
@@ -96,28 +84,27 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-//ajout des middlewares de gestion de l'authentification et de l'autorisation
+// Ajoute les middlewares d'authentification, de BFF et d'autorisation
 app.UseAuthentication();
 app.UseBff();
 app.UseAuthorization();
-app.UseAntiforgery();
 
-// ajout des endpoints de gestion pour la connexion et la deconnexion
+// Ajoute les points de terminaison pour la connexion / déconnexion
 app.MapBffManagementEndpoints();
 
 
 app.MapRazorPages();
 
+// Ajoute les points de terminaison correspondants aux contrôleurs de l'API locale (du backend)
+// avec la politique d'autorisation par défaut
+// et indique qu'il s'agit de points de terminaison locaux du backend
+app.MapControllers()
+    .RequireAuthorization()
+    .AsBffApiEndpoint();
 
-app.MapControllers() // mapper les controllers de l'api
-    .RequireAuthorization() // ajouter la politique d'authorisation par defaut 
-    .AsBffApiEndpoint(); // indique qu'il s'agit de pt de terminaison locaux du backend
-
-//mapp les endpoints e l'api externe sur l'API locale
-app.MapRemoteBffApiEndpoint("/Regions", new Uri(app.Configuration["ApiUrl"] + "Regions"))
-    .WithAccessToken(RequiredTokenType.User);
-
-
+// Mappe les points de terminaison de l'API externe sur l'API locale
+app.MapRemoteBffApiEndpoint("/Regions", builder.Configuration["ApiUrl"] + "Regions") // ou 7022 pour l'api locale
+       .RequireAccessToken(TokenType.User);
 
 app.MapFallbackToFile("index.html");
 
