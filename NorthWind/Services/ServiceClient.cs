@@ -1,11 +1,6 @@
 using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.JsonPatch.Adapters;
-using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Northwind.Data;
-using Northwind.Data;
-using Northwind.Entities;
 
 namespace Northwind.Services
 {

@@ -1,14 +1,6 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
-using Northwind.Controllers;
 using Northwind.Services;
 using Northwind.Entities;
-using Northwind.Data;
-using Northwind.Entities;
-using Northwind.Services;
-using System.Data;
 
 namespace Northwind.Controllers
 {

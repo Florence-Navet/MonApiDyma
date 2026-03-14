@@ -4,11 +4,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Northwind.Services;
 using Northwind.Data;
-using Northwind.Services;
-using System.ComponentModel;
 using System.Net;
-using System.Runtime.CompilerServices;
-using System.Text.Json;
 
 namespace Northwind.Controllers
 {

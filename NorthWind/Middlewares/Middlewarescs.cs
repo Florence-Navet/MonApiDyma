@@ -1,10 +1,6 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Northwind.Data;
-using Northwind.Data;
-using System.Net;
 
 namespace Northwind.Middlewares
 {

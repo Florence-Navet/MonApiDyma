@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using Northwind.Controllers;
 using Northwind.Services;
 using Northwind.Entities;
-using Northwind.Entities;
-using Northwind.Services;
 
 namespace Northwind.Controllers
 {

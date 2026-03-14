@@ -1,8 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Northwind.Services;
-using Northwind.Controllers;
-using Northwind.Entities;
-using Northwind.Services;
 
 namespace Northwind.Controllers
 {
