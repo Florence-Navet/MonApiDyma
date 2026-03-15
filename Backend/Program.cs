@@ -18,7 +18,21 @@ builder.Services.AddAuthentication(options =>
         options.DefaultChallengeScheme = "oidc"; // page protégé -> user non authentifié 
        options.DefaultSignOutScheme = "oidc"; // déconnexion -> redirection vers le fournisseur d'identité pour terminer la session
     })
-    // Authentification par cookie
+    // Authentification par cookie -> duree de validité par defaut 14j, mais on peut la configurer
+
+//modifier la duree d 'expirttion du cookke
+//.AddCookie("cookie", options =>
+//{
+//    // Durée de validité de la session stockée dans le cookie
+//    options.ExpireTimeSpan = TimeSpan.FromHours(1);
+
+//    // Expiration glissante de la session
+//    // Si active, un nouveau cookie est émis à chaque requête
+//    // envoyée à plus de la moitié de la durée de session
+//    options.SlidingExpiration = false;
+//    ...
+//}
+
     .AddCookie("cookie", options =>
     {
        options.Cookie.Name = "__Host-blazor";
@@ -50,10 +64,10 @@ builder.Services.AddAuthentication(options =>
        options.GetClaimsFromUserInfoEndpoint = true;
 
        // Enregistre les jetons d'accès et d'actualisation dans le cookie d'authentification
-       options.SaveTokens = true;
+       options.SaveTokens = true; // evite d'interroger le serveur à chaque requete pour vérifier la validité du jeton d'accès
 
-       // Paramètres nécessaires à OIDC pour valider les jetons
-       options.TokenValidationParameters = new TokenValidationParameters
+        // Paramètres nécessaires à OIDC pour valider les jetons
+        options.TokenValidationParameters = new TokenValidationParameters
        {
           NameClaimType = "name",
           RoleClaimType = "role"

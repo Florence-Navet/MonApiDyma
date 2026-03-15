@@ -52,8 +52,26 @@ builder.Services.AddIdentityServer(options =>
             FrontChannelLogoutUri = "https://localhost:7189/signout-oidc",
             // Etendue d'API autorisée
             AllowedScopes = { "openid", "profile", "entreprise" },
+
+            //------------------------------------------------------
+            // Paramètrage des jetons et de leur rafraichissement
+            // Duree de validité du jeton d'identité (en secondes)
+            IdentityTokenLifetime = 30, // normalement 5mn
+
+            //Duree de validité du jeton d'accès à l'API (en secondes)
+            AccessTokenLifetime = 40, // normalement 1h
+
             // autorise le client à utiliser un jeton d'actualisation
-            AllowOfflineAccess = true // pour pouvoir utiliser le flux de rafraichissement de jetons
+            AllowOfflineAccess = true, // pour pouvoir utiliser le flux de rafraichissement de jetons
+
+            // Duree de validité du jeton d'actualisation (en secondes)
+            AbsoluteRefreshTokenLifetime = 3600, // normalement 30j
+
+            //Reinitialise la durée de validité du jeton d'actualisation
+            // à chaque actualisation du jeton d'accès
+            RefreshTokenExpiration = TokenExpiration.Sliding,
+            // Duree de validité glissante du jeton d'actualisation (en secondes)
+            SlidingRefreshTokenLifetime = 60 // normalement 15j
         }
     })
     // Indique d'utiliser ASP.Net core Identity pour la gestion des profils et revendications
