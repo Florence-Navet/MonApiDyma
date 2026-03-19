@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Northwind.Services;
+using System.Security.Claims;
 
 namespace Northwind.Controllers
 {
@@ -42,6 +43,12 @@ namespace Northwind.Controllers
         {
             try
             {
+                // Récupère l'id de l'utilisateur
+                string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (int.TryParse(userId, out int id))
+                    cmde.IdEmploye = id;
+
+
                 Commande? commande = await _serviceCmde.AjouterCommande(cmde);
 
                 string uri = Url.Action(nameof(GetCommande), new { id = commande?.Id }) ?? "";

@@ -95,13 +95,21 @@ namespace Northwind
                     options.TokenValidationParameters.ClockSkew = TimeSpan.Zero;
                 });
 
-            //ttes les requetes devront contenir un jeton d'authentification valide
+            //Ajoute le service d'autorisation 
             builder.Services.AddAuthorization(options =>
             {
                 //specifie que tout utilisateur de l'api doit etre authentifié
                 options.FallbackPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
+                //.RequireClaim("Salarié")
                     .Build();
+
+                //Seuls les utilisateurs ayant la fonction de Directeur peuvent gérer des employés
+                options.AddPolicy("GérerEmployés",
+                    p => p.RequireClaim("Fonction", "Directeur"));
+                    //.RequireClaim("Service", "Commerce", "RH"));
+
+
             });
 
             var app = builder.Build();

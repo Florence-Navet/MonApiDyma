@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Northwind.Services;
 using Northwind.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Northwind.Controllers
 {
 
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize(Policy = "GérerEmployés")]
     public class EmployesController : ControllerBase
     {
         private readonly IServiceEmployes _serviceEmp;
@@ -65,6 +67,7 @@ namespace Northwind.Controllers
         // POST: api/Employes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
+        [Authorize(Policy = "GérerEmployés")]
         public async Task<ActionResult<Employe>> PostEmployé(Employe emp)
         {
             try
@@ -85,6 +88,7 @@ namespace Northwind.Controllers
 
         // POST: api/Affectations
         [HttpPost("/api/Affectations")]
+        [Authorize(Policy = "GérerEmployés")]
         public async Task<ActionResult<Affectation>> PostAffectation([FromForm] Affectation a)
         {
             //Enregistre les données en base
@@ -97,6 +101,7 @@ namespace Northwind.Controllers
 
         // POST: api/Employes/formdata
         [HttpPost("formdata")]
+        [Authorize(Policy = "GérerEmployés")]
         public async Task<ActionResult<Employe>> PostEmployéFormData([FromForm] FormEmploye fe)
         {
             Employe emp = new()
