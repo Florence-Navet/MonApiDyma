@@ -52,6 +52,7 @@ namespace Northwind.Controllers
         }
 
         [HttpGet("/api/Regions/{id}")]
+        [Authorize(Policy = "GérerEmployés")]
         public async Task<ActionResult<Region>> GetRégion(int id)
         {
             Region? region = await _serviceEmp.ObtenirRégion(id);
